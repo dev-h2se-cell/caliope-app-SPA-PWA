@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useTransition } from 'react';
+import { useState, useEffect, useMemo, useTransition, useCallback } from 'react';
 import useAuth from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,50 +19,18 @@ import { AgendaCalendarView } from '@/components/AgendaCalendarView';
 import { Input } from '@/components/ui/input';
 import { UserManagement } from '@/components/UserManagement';
 import { ItemCreationDialog } from './ItemCreationDialog';
+import { AccessDenied } from '@/components/ui/AccessDenied';
+
+const PAGE_SIZE = 10;
 
 function LoadingSkeleton() {
     return (
         <div className="space-y-6">
-            <div className="space-y-2">
-                <Skeleton className="h-8 w-1/4" />
-                <Skeleton className="h-5 w-1/2" />
-            </div>
-            <Card>
-                <CardHeader>
-                    <Skeleton className="h-7 w-48" />
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2">
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                    </div>
-                </CardContent>
-            </Card>
+            <Skeleton className="h-12 w-[250px]" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
         </div>
     );
 }
-
-function AccessDenied() {
-    return (
-        <Card className="text-center mt-10">
-            <CardHeader>
-                <div className="mx-auto bg-destructive/10 rounded-full p-3 w-fit">
-                    <Lock className="mx-auto h-10 w-10 text-destructive" />
-                </div>
-                <CardTitle className="mt-4">Acceso Denegado</CardTitle>
-                <CardDescription>No tienes permisos para acceder a esta página.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Button asChild>
-                    <Link href="/">Volver al Inicio</Link>
-                </Button>
-            </CardContent>
-        </Card>
-    );
-}
-
-const PAGE_SIZE = 10;
 
 function AdminDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -91,28 +59,30 @@ function AdminDashboard() {
   const [isItemCreationOpen, setIsItemCreationOpen] = useState(false);
   const [itemCreationType, setItemCreationType] = useState<'product' | 'service'>('product');
 
-  const fetchProducts = (page: number, query: string = productSearchQuery, category: string = productCategoryFilter) => {
+  const fetchProducts = useCallback((page: number, query: string = productSearchQuery, category: string = productCategoryFilter) => {
     startTransition(async () => {
       const { products: fetchedProducts, total } = await getWellnessProducts({ page, pageSize: PAGE_SIZE, query, category });
       setProducts(fetchedProducts);
       setTotalProducts(total);
     });
-  };
+  }, [productSearchQuery, productCategoryFilter]);
 
-  const fetchServices = (page: number, query: string = serviceSearchQuery, category: string = serviceCategoryFilter) => {
+  const fetchServices = useCallback((page: number, query: string = serviceSearchQuery, category: string = serviceCategoryFilter) => {
     startTransition(async () => {
       const { services: fetchedServices, total } = await getWellnessServices({ page, pageSize: PAGE_SIZE, query, category });
       setServices(fetchedServices);
       setTotalServices(total);
     });
-  };
+  }, [serviceSearchQuery, serviceCategoryFilter]);
 
   useEffect(() => {
     fetchProducts(productPage, productSearchQuery, productCategoryFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productPage]);
 
   useEffect(() => {
     fetchServices(servicePage, serviceSearchQuery, serviceCategoryFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [servicePage]);
   
   useEffect(() => {

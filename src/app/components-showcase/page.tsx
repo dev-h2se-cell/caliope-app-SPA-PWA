@@ -51,7 +51,7 @@ const ShowcasePage = () => {
     <div className="container mx-auto p-8 bg-background text-foreground">
       <header className="text-center mb-12">
         <h1 className="text-5xl font-bold tracking-tighter">Component Showcase</h1>
-        <p className="text-muted-foreground mt-2">A visual inventory of Caliope's UI components.</p>
+        <p className="text-muted-foreground mt-2">A visual inventory of Caliope&apos;s UI components.</p>
       </header>
 
       <Separator className="my-8" />

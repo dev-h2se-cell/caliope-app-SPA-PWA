@@ -38,7 +38,7 @@ function filterAndPaginate<T extends { name: string; category: string }>(items: 
 
 export async function getWellnessServices({ page = 1, pageSize = 10, query = '', category = 'all' }: { page: number; pageSize: number; query?: string; category?: string; }): Promise<{ services: WellnessService[], total: number }> {
   if (IS_DEMO_MODE) {
-    console.log("ACTIONS: Serving mock wellness services from local data.");
+    // console.log("ACTIONS: Serving mock wellness services from local data.");
     const { data, total } = filterAndPaginate(mockWellnessServices, { page, pageSize, query, category });
     return { services: data, total };
   }
@@ -52,6 +52,24 @@ export async function getWellnessServices({ page = 1, pageSize = 10, query = '',
 
   const { data, total } = filterAndPaginate(allServices, { page, pageSize, query, category });
   return { services: data, total };
+}
+
+export async function getServiceById(id: string): Promise<WellnessService | null> {
+    if (IS_DEMO_MODE) {
+        return mockWellnessServices.find(s => s.id === id) || null;
+    }
+    const adminDb = getAdminDb();
+    if (!adminDb) return null;
+    try {
+        const doc = await adminDb.collection('services').doc(id).get();
+        if (!doc.exists) {
+            return null;
+        }
+        return { id: doc.id, ...doc.data() } as WellnessService;
+    } catch (error) {
+        console.error("Error fetching service by ID:", error);
+        return null;
+    }
 }
 
 
@@ -69,7 +87,7 @@ export async function getServiceCategories(): Promise<string[]> {
 
 export async function getWellnessProducts({ page = 1, pageSize = 10, query = '', category = 'all' }: { page: number; pageSize: number; query?: string; category?: string; }): Promise<{ products: Product[], total: number }> {
   if (IS_DEMO_MODE) {
-    console.log("ACTIONS: Serving mock wellness products from local data.");
+    // console.log("ACTIONS: Serving mock wellness products from local data.");
     const { data, total } = filterAndPaginate(mockWellnessProducts, { page, pageSize, query, category });
     return { products: data, total };
   }
@@ -138,31 +156,47 @@ export async function getRewards(): Promise<Reward[]> {
 
 async function bulkUpload(collectionName: string, items: any[], idPrefix: string) {
     if (IS_DEMO_MODE) {
-        console.log(`DEMO: Simulating bulk upload of ${items.length} items to ${collectionName}`);
+        // console.log(`DEMO: Simulating bulk upload of ${items.length} items to ${collectionName}`);
         return items.length;
     }
     const adminDb = getAdminDb();
     if (!adminDb) {
       throw new Error("La base de datos del administrador no está disponible.");
     }
-    const batch = adminDb.batch();
-    const collectionRef = adminDb.collection(collectionName);
-    
-    items.forEach((item, index) => {
-        const id = `${idPrefix}-${Date.now()}-${index}`;
-        const docRef = collectionRef.doc(id);
-        const newItem = {
-            ...item,
-            id,
-            rating: 0,
-            reviewCount: 0,
-            createdAt: FieldValue.serverTimestamp(),
-        };
-        batch.set(docRef, newItem);
-    });
 
-    await batch.commit();
-    return items.length;
+    const CHUNK_SIZE = 400; // Firestore limit is 500, we use 400 for safety
+    const chunks = [];
+    
+    for (let i = 0; i < items.length; i += CHUNK_SIZE) {
+        chunks.push(items.slice(i, i + CHUNK_SIZE));
+    }
+
+    let totalProcessed = 0;
+
+    for (const chunk of chunks) {
+        const batch = adminDb.batch();
+        const collectionRef = adminDb.collection(collectionName);
+
+        chunk.forEach((item, index) => {
+            // Unique ID generation based on timestamp and index within the whole batch
+            const globalIndex = totalProcessed + index;
+            const id = `${idPrefix}-${Date.now()}-${globalIndex}`;
+            const docRef = collectionRef.doc(id);
+            const newItem = {
+                ...item,
+                id,
+                rating: 0,
+                reviewCount: 0,
+                createdAt: FieldValue.serverTimestamp(),
+            };
+            batch.set(docRef, newItem);
+        });
+
+        await batch.commit();
+        totalProcessed += chunk.length;
+    }
+
+    return totalProcessed;
 }
 
 export async function bulkAddProducts(jsonContent: string): Promise<{ success: boolean; message: string; count: number }> {
@@ -200,7 +234,7 @@ export async function getUsers({ page = 1, pageSize = 10, query = '', role = 'al
     if (IS_DEMO_MODE) {
         // En modo demo no tenemos una lista de usuarios mock, devolvemos un array vacío
         // para evitar errores, pero esto podría ampliarse en el futuro.
-        console.log("ACTIONS: Serving mock users (empty list) from local data.");
+        // console.log("ACTIONS: Serving mock users (empty list) from local data.");
         return { users: [], total: 0 };
     }
     

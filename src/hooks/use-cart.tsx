@@ -18,8 +18,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isInitial, setIsInitial] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Solo se ejecuta en el cliente
     try {
         const storedCart = localStorage.getItem('caliope_cart');
@@ -78,7 +80,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const totalPrice = items.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   const value = { items, addItem, removeItem, updateItemQuantity, clearCart, totalItems, totalPrice };
-
+  
+  // Evitar renderizar children hasta que esté montado para prevenir hydration mismatch
+  // si el contenido depende del estado inicial del carrito.
+  // Sin embargo, para SEO y renderizado inicial rápido, es mejor renderizar children.
+  // Pero si el error es grave, devolvemos null hasta montar.
+  // En este caso, devolveremos children envueltos en el provider siempre, 
+  // confiando en que useEffect maneja la sincronización.
+  
   return (
     <CartContext.Provider value={value}>
       {children}

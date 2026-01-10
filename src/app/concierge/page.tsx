@@ -37,15 +37,20 @@ const ConciergePage = () => {
   const GUEST_INTERACTION_LIMIT = 2;
 
   useEffect(() => {
-    // Saludo inicial del asistente
-    setMessages([
-        {
-            id: 'initial-greeting',
-            role: 'assistant',
-            content: "¡Hola! Soy tu Asistente de Bienestar. A veces el día a día nos agota, pero estoy aquí para ayudarte. Cuéntame con confianza qué necesitas o cómo te sientes. ¿Buscas un momento de paz, aliviar una molestia o simplemente darte un gusto?"
-        }
-    ])
-  }, []);
+    if (!authLoading) {
+        const greeting = user 
+            ? `¡Hola, ${user.displayName || 'amiga/o'}! Me alegra verte de nuevo por aquí. Soy tu Asistente de Bienestar. Cuéntame, ¿cómo te sientes hoy o en qué área de tu autocuidado te gustaría enfocarte?`
+            : "¡Hola! Soy tu Asistente de Bienestar. A veces el día a día nos agota, pero estoy aquí para ayudarte. Cuéntame con confianza qué necesitas o cómo te sientes. ¿Buscas un momento de paz, aliviar una molestia o simplemente darte un gusto?";
+
+        setMessages([
+            {
+                id: 'initial-greeting',
+                role: 'assistant',
+                content: greeting
+            }
+        ]);
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     // Scroll automático al final del chat

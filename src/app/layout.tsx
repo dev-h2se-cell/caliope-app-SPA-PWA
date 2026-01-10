@@ -1,57 +1,34 @@
-
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
+import { PT_Sans } from 'next/font/google';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster"
-import { CartProvider } from '@/hooks/use-cart';
-import { AuthProvider } from '@/hooks/use-auth';
-import { WhatsAppButton } from '@/components/WhatsAppButton';
-import { Lexend } from 'next/font/google';
-import { ToastProvider } from '@/hooks/use-toast';
+import { Providers } from '@/components/Providers';
 
-const lexend = Lexend({
+const ptSans = PT_Sans({
+  weight: ['400', '700'],
   subsets: ['latin'],
+  variable: '--font-pt-sans',
   display: 'swap',
-  variable: '--font-lexend',
 });
 
 export const metadata: Metadata = {
-  title: 'Caliope - Tu Curador de Bienestar',
-  description: 'Tu guía de bienestar personalizada',
+  title: 'Caliope | Tu Bienestar, Curado para Ti',
+  description: 'Plataforma personalizada de servicios y productos de bienestar y estética.',
   icons: {
     icon: '/favicon.svg',
   },
 };
 
-import { ThemeProvider } from '@/components/ThemeProvider';
-
-// ... (imports existentes)
-
-// ... (fuente y metadata)
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="es" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${lexend.variable} font-body antialiased`}>
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-          <ToastProvider>
-            <AuthProvider>
-              <CartProvider>
-                {children}
-              </CartProvider>
-            </AuthProvider>
-            <WhatsAppButton />
-            <Toaster />
-          </ToastProvider>
-        </ThemeProvider>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${ptSans.variable} font-sans antialiased min-h-screen flex flex-col`}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

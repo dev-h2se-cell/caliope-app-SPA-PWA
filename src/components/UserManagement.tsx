@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -35,18 +35,18 @@ export function UserManagement() {
 
   const totalPages = Math.ceil(totalUsers / PAGE_SIZE);
 
-  const fetchUsers = () => {
+  const fetchUsers = useCallback(() => {
     startTransition(async () => {
       const { users: fetchedUsers, total } = await getUsers({ page, pageSize: PAGE_SIZE, query, role, level, sortBy, sortDirection });
       setUsers(fetchedUsers);
       setTotalUsers(total);
     });
-  };
+  }, [page, query, role, level, sortBy, sortDirection]);
 
   // Este efecto se ejecuta cada vez que cambian los filtros, la paginación o el ordenamiento.
   useEffect(() => {
     fetchUsers();
-  }, [page, query, role, level, sortBy, sortDirection]);
+  }, [fetchUsers]);
   
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
