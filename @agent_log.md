@@ -26,6 +26,18 @@ Este archivo es la memoria técnica y bitácora de navegación para el desarroll
 
 ## Historial de Cambios y Hitos
 
+### 10/01/2026 - QA Final y Configuración de Contacto (Fase Beta)
+*   **Contexto:** Verificación final de flujos críticos antes del despliegue y ajuste de configuración de contacto.
+*   **QA Realizado (Aprobado):**
+    1.  **Registro:** Flujo robusto. Maneja correctamente la falta de credenciales de Admin SDK (Modo Desarrollo/Fallback).
+    2.  **Concierge:** Lógica verificada. Sistema híbrido (IA con fallback a búsqueda por keywords) asegura respuestas siempre.
+    3.  **Reservas:** Distinción correcta entre Citas (Servicios -> Perfil) y Productos (Carrito -> Checkout).
+    4.  **Checkout:** Flujo completo verificado (Carrito -> Orden Firebase -> WhatsApp).
+*   **Cambios de Configuración:**
+    *   Se agregó `NEXT_PUBLIC_WHATSAPP_NUMBER` a `.env.local` para centralizar el número de contacto.
+    *   Se actualizó `CheckoutSuccessPage` para usar esta variable de entorno en lugar de un valor hardcodeado.
+*   **Resultado:** La aplicación es funcional, resiliente a fallos de configuración y está lista para pruebas de usuario.
+
 ### 10/01/2026 - SEO Dinámico y Cierre de Venta (Fase 4)
 *   **Contexto:** Preparación para Beta. Solución de problemas de visibilidad (SEO) y flujo de pago manual.
 *   **Cambios Realizados:**
@@ -47,7 +59,8 @@ Este archivo es la memoria técnica y bitácora de navegación para el desarroll
 
 ---
 ## Pendientes Inmediatos
-1.  **QA Final:** Pruebas de integración del flujo completo (Registro -> Concierge -> Reserva -> Compra).
+1.  **Despliegue:** Ejecutar despliegue final a Vercel/Firebase Hosting.
+2.  **Configuración:** Reemplazar el número de WhatsApp dummy ("573000000000") en `.env.local` con el real.
 
 ---
 ## Guías de Trabajo (Recordatorios)

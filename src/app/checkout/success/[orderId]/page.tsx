@@ -39,7 +39,7 @@ export default function CheckoutSuccessPage() {
         return () => clearInterval(interval);
     }, []);
 
-    const whatsappNumber = "573000000000"; // Reemplazar con el número real
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "573000000000"; 
     const whatsappMessage = `Hola Caliope, acabo de realizar el pedido #${orderId}. Me gustaría coordinar el pago y el envío.`;
     const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
