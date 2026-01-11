@@ -7,10 +7,10 @@ Este archivo es la memoria técnica y bitácora de navegación para el desarroll
 *   **Nombre:** Caliope App
 *   **Misión:** Plataforma integral de bienestar y estética (B2B2C).
 *   **Stack Tecnológico:**
-    *   **Frontend:** Next.js 15 (App Router), React 19, Tailwind CSS.
+    *   **Frontend:** Next.js 16.1.1 (App Router), React 19, Tailwind CSS.
     *   **UI Components:** ShadCN/UI, Framer Motion, Lucide Icons.
     *   **Backend:** Firebase (Auth, Firestore, Admin SDK).
-    *   **Estado de Datos:** Implementación de `DEMO_MODE` para resiliencia sin credenciales.
+    *   **Infraestructura:** Despliegue en Vercel (Frontend/Funciones) + Firebase (Base de Datos/Auth).
 *   **Documento Maestro:** `docs/CALIOPE_MASTER_DOCUMENT.md` (Fuente de verdad).
 
 ---
@@ -19,12 +19,28 @@ Este archivo es la memoria técnica y bitácora de navegación para el desarroll
 
 *   **Autenticación:** Operativa con Firebase Auth y hooks personalizados (`use-auth`).
 *   **Navegación:** Estructura de App Router completa (admin, catalog, profile, memberships, etc.).
-*   **Gestión de Datos:** Centralizada en `src/lib`. Los datos de catálogo se manejan mediante carga de JSON y persistencia en Firestore.
+*   **Gestión de Datos:** Centralizada en `src/lib`. Conexión activa a Firestore verificada.
+*   **Seguridad:** Reglas de Firestore desplegadas (bloqueo por defecto, acceso por propietario).
 *   **Protección de Rutas:** Implementada en cliente (`router.push`) y componentes de bloqueo (`AccessDenied`).
 
 ---
 
 ## Historial de Cambios y Hitos
+
+### 10/01/2026 - Actualización Crítica y Despliegue Exitoso (Fase Producción)
+*   **Contexto:** Resolución de vulnerabilidades y problemas de despliegue en Vercel.
+*   **Acciones Técnicas:**
+    1.  **Seguridad:** Actualización de Next.js a `v16.1.1` para mitigar CVE-2025-66478.
+    2.  **Configuración de Build:**
+        *   Migración del script de build a `next build --webpack` por incompatibilidad temporal de Turbopack.
+        *   Eliminación de configuración obsoleta de ESLint en `next.config.ts`.
+    3.  **Gestión de Paquetes (pnpm):**
+        *   Sincronización de `pnpm-lock.yaml` tras actualizaciones de dependencias (`firebase-tools`, `next`).
+        *   Autorización explícita de scripts de build (`sharp`, `protobufjs`, `re2`) en `package.json` para cumplir políticas de seguridad de Vercel.
+    4.  **Base de Datos:**
+        *   Despliegue de reglas de seguridad (`firestore.rules`) e índices.
+        *   Validación de conexión con credenciales de cuenta de servicio (`FIREBASE_SERVICE_ACCOUNT`).
+*   **Resultado:** El pipeline de despliegue en Vercel está reparado y seguro. La base de datos Firestore está activa y protegida.
 
 ### 10/01/2026 - QA Final y Configuración de Contacto (Fase Beta)
 *   **Contexto:** Verificación final de flujos críticos antes del despliegue y ajuste de configuración de contacto.
@@ -38,29 +54,10 @@ Este archivo es la memoria técnica y bitácora de navegación para el desarroll
     *   Se actualizó `CheckoutSuccessPage` para usar esta variable de entorno en lugar de un valor hardcodeado.
 *   **Resultado:** La aplicación es funcional, resiliente a fallos de configuración y está lista para pruebas de usuario.
 
-### 10/01/2026 - SEO Dinámico y Cierre de Venta (Fase 4)
-*   **Contexto:** Preparación para Beta. Solución de problemas de visibilidad (SEO) y flujo de pago manual.
-*   **Cambios Realizados:**
-    1.  **SEO:** Implementación de `generateMetadata` en `/service/[id]`. Ahora los enlaces compartidos muestran imagen, título y descripción correctos.
-    2.  **Checkout Success:** Nueva página `/checkout/success/[orderId]` con animación de confeti y botón de WhatsApp pre-llenado para coordinar el pago. Esto resuelve la falta de pasarela de pagos automática.
-    3.  **Dependencias:** Instalación de `canvas-confetti`.
-*   **Resultado:** El proyecto está listo para ser desplegado en una Beta Cerrada.
-
-### 10/01/2026 - Reparación y Refactorización
-*   **Contexto:** El frontend se reportó dañado (error de sintaxis) y se solicitó limpieza.
-*   **Cambios Realizados:**
-    1.  **Fix Crítico:** Corrección de error de sintaxis en `AdminPageClient.tsx` (tags mal cerrados en `LoadingSkeleton`).
-    2.  **Limpieza:** Eliminación de múltiples `console.log` de depuración y simulación en `app/actions.ts`, `concierge/actions.ts` y `admin/actions.ts`.
-    3.  **Refactorización:**
-        *   Implementación de `useCallback` en `UserManagement.tsx` y `AdminPageClient.tsx` para optimizar funciones de fetch.
-        *   Resolución de advertencias de linter (dependencias de `useEffect`).
-    4.  **Verificación:** Build y Lint exitosos.
-*   **Resultado:** El proyecto compila correctamente y el código está más limpio y optimizado.
-
 ---
 ## Pendientes Inmediatos
-1.  **Despliegue:** Ejecutar despliegue final a Vercel/Firebase Hosting.
-2.  **Configuración:** Reemplazar el número de WhatsApp dummy ("573000000000") en `.env.local` con el real.
+1.  **Verificación Post-Despliegue:** Confirmar funcionamiento en URL de producción (registro de usuario real).
+2.  **Datos Reales:** Configurar número de WhatsApp real en variables de entorno de producción (Vercel).
 
 ---
 ## Guías de Trabajo (Recordatorios)
