@@ -72,7 +72,8 @@
       "@firebase/util",
       "protobufjs",
       "sharp",
-      "unrs-resolver"
+      "unrs-resolver",
+      "re2"
     ]
   }
 }
