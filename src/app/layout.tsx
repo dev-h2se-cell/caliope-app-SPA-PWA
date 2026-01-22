@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: 'Caliope',
     images: [
       {
-        url: '/opengraph-image.png',
+        url: '/opengraph-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Caliope App Preview',
