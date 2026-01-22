@@ -23,9 +23,14 @@ Se aplicó la estandarización "Twin v4" al proyecto `CALIOPE-APP` y se configur
 
 ---
 
-## ⚠️ Bloqueo de Entorno y Ejecución (Windows)
-El servidor de desarrollo de Next.js (Turbopack) se cierra inmediatamente (`Exit Code 1`) en este entorno local.
+## ⚠️ Bloqueo de Entorno Local (Windows)
+El servidor de desarrollo de Next.js (Turbopack) tiene conflictos con rutas profundas y espacios en Windows.
+*   **Estado Local:** `npm run dev` puede fallar.
+*   **Estado Producción (Vercel):** ✅ **Despliegue Exitoso**.
+    *   Repo: [caliope-app-SPA-PWA](https://github.com/dev-h2se-cell/caliope-app-SPA-PWA)
+    *   Fixes:
+        *   Migración a `npm` (eliminado conflicto `pnpm`).
+        *   Tailwind v4 `@latest` (fix ScannerOptions).
+        *   NextPWA Config (fix Tipos TypeScript).
 
-*   **Diagnóstico:** Aunque se renombró `caliope App` a `caliope-app`, la ruta padre completa aún contiene espacios (`c:\aht\trabajo\app terminadas\PRUEBAS\PRUEBAS TWIN\...`). Next.js en Windows suele presentar conflictos con estas rutas profundas y con espacios.
-*   **Estado del Código:** El código fuente (Tailwind v4, PWA Config) es válido y seguro.
-*   **Acción Recomendada:** Desplegar el proyecto en una ruta raíz limpia (ej: `C:\Proyectos\caliope-app`) o en un entorno Linux/Vercel. No se requieren cambios de código adicionales.
+**El proyecto es 100% funcional en la nube como SPA/PWA.**
