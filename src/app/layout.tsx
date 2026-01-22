@@ -23,6 +23,22 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Caliope App',
   },
+  openGraph: {
+    title: 'Caliope | Tu Bienestar, Curado para Ti',
+    description: 'Plataforma personalizada de servicios y productos de bienestar y estética.',
+    url: 'https://caliope.app',
+    siteName: 'Caliope',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Caliope App Preview',
+      },
+    ],
+    locale: 'es_CO',
+    type: 'website',
+  },
 };
 
 export const viewport: Viewport = {
