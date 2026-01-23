@@ -42,7 +42,14 @@ Se realizaron ajustes finos para garantizar la instalabilidad y presencia profes
 *   **SEO / Open Graph:** Se implementó imagen de previsualización personalizada (`opengraph-image.jpg`) para WhatsApp/Social Sharing.
 *   **Infraestructura:** Proyecto migrado exitosamente a `C:\Dev\Production\caliope-app` para eliminar errores de rutas en Windows.
 
-### 4. Análisis Funcional Profundo (Enero 2026)
+### 4. Reactivación Concierge AI (Gemini 1.5 Flash)
+Se conectó el "cerebro" de la aplicación:
+*   **API:** `@google/generative-ai` configurada en `src/lib/gemini.ts`.
+*   **Modelo:** `gemini-1.5-flash` optimizado para velocidad y costo.
+*   **Lógica:** `src/app/actions.ts` ahora consulta a la IA antes de hacer fallback a la base de datos.
+*   **Salida:** La IA devuelve un JSON estructurado de `WellnessService` con precios y descripciones generadas en tiempo real.
+
+### 5. Análisis Funcional Profundo (Enero 2026)
 Tras una auditoría de código (`src/app/actions.ts`, `Concierge`, `UserManagement`), se confirma el estado actual:
 *   **Arquitectura:** Híbrida (Next.js Server Actions + Firebase Firestore).
 *   **Modo Demo:** El sistema tiene "Fallbacks" inteligentes. Si no detecta credenciales de Firebase Admin, simula guardados y logins para no bloquear el desarrollo.
