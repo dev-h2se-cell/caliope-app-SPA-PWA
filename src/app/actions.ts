@@ -8,13 +8,23 @@ import { getAdminDb } from '@/lib/firebase-admin-config';
 // All AI-related flows have been removed to fix the build.
 // You can re-integrate them later once the compatibility issues are resolved.
 
+import { generateWellnessRecommendations } from '@/lib/gemini';
+
 export async function getRecommendationsAction(
-  preferences: string
+    preferences: string
 ): Promise<WellnessService[]> {
-  // console.log("Simulating recommendation action. No AI flow connected.");
-  // Return some generic services as a fallback
-  const { services } = await getWellnessServices({ page: 1, pageSize: 5 });
-  return services;
+    // 1. Intentar generar recomendaciones con IA
+    // console.log("Consulting Gemini for:", preferences);
+    const aiSuggestions = await generateWellnessRecommendations(preferences);
+
+    if (aiSuggestions.length > 0) {
+        return aiSuggestions;
+    }
+
+    // 2. Fallback: Si la IA falla o no retorna nada, devolver servicios genéricos
+    console.log("AI returned empty, falling back to database services.");
+    const { services } = await getWellnessServices({ page: 1, pageSize: 5 });
+    return services;
 }
 
 // The following actions are placeholders and do not perform any real operations.
@@ -23,14 +33,14 @@ export async function handleGoogleSignInAction(input: any): Promise<{ success: b
     try {
         const db = getAdminDb();
         const userId = input.uid;
-        
+
         if (!db) {
             // console.log("DEMO_MODE/NO-ADMIN: Simulating Google Sign-In.", input);
             return { success: true, userId: userId || 'mock-user-id', isNewUser: false };
         }
 
         // console.log("REAL ACTION: Handling Google Sign-In for", userId);
-        
+
         const userRef = db.collection('users').doc(userId);
         const userSnap = await userRef.get();
 
@@ -140,10 +150,10 @@ export async function handleProfessionalRegistrationAction(input: any): Promise<
 export async function handleUserProfileUpdateAction(input: any): Promise<{ success: boolean; error?: string }> {
     try {
         const db = getAdminDb();
-        
+
         if (!db) {
-             // console.log("DEMO_MODE/NO-ADMIN: Simulating user profile update.", input);
-             return { success: true };
+            // console.log("DEMO_MODE/NO-ADMIN: Simulating user profile update.", input);
+            return { success: true };
         }
 
         if (!input.uid) {
@@ -156,7 +166,7 @@ export async function handleUserProfileUpdateAction(input: any): Promise<{ succe
         if (input.name) updateData.name = input.name;
         if (input.phone) updateData.phone = input.phone;
         if (input.address) updateData.address = input.address;
-        
+
         // Use merge: true implicitly by using update, or set with merge if document might not exist (safer)
         await db.collection('users').doc(input.uid).set(updateData, { merge: true });
 
@@ -179,10 +189,10 @@ export async function createAppointmentAction(input: {
 }): Promise<{ success: boolean; appointmentId?: string; error?: string }> {
     try {
         const db = getAdminDb();
-        
+
         if (!db) {
-             // console.log("DEMO_MODE/NO-ADMIN: Simulating appointment creation.", input);
-             return { success: true, appointmentId: `mock-appt-${Date.now()}` };
+            // console.log("DEMO_MODE/NO-ADMIN: Simulating appointment creation.", input);
+            return { success: true, appointmentId: `mock-appt-${Date.now()}` };
         }
 
         // console.log("REAL ACTION: Creating appointment in Firestore", input);
@@ -220,10 +230,10 @@ export async function createOrderAction(input: {
 }): Promise<{ success: boolean; orderId?: string; error?: string }> {
     try {
         const db = getAdminDb();
-        
+
         if (!db) {
-             // console.log("DEMO_MODE/NO-ADMIN: Simulating order creation.", input);
-             return { success: true, orderId: `mock-order-${Date.now()}` };
+            // console.log("DEMO_MODE/NO-ADMIN: Simulating order creation.", input);
+            return { success: true, orderId: `mock-order-${Date.now()}` };
         }
 
         // console.log("REAL ACTION: Creating order in Firestore", input);

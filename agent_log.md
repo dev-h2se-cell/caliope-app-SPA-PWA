@@ -34,3 +34,18 @@ El servidor de desarrollo de Next.js (Turbopack) tiene conflictos con rutas prof
         *   NextPWA Config (fix Tipos TypeScript).
 
 **El proyecto es 100% funcional en la nube como SPA/PWA.**
+
+### 3. Branding, SEO y Perfeccionamiento PWA (Enero 2026)
+Se realizaron ajustes finos para garantizar la instalabilidad y presencia profesional:
+*   **Metadata Fix:** Se vinculó explícitamente `manifest.json` y config `appleWebApp` en `layout.tsx` (Requisito para "Add to Home Screen" en iOS/Android moderno).
+*   **Branding "Crystal Tech":** Se generaron e instalaron nuevos iconos PWA (Glassmorphism 3D) de 512px y 192px.
+*   **SEO / Open Graph:** Se implementó imagen de previsualización personalizada (`opengraph-image.jpg`) para WhatsApp/Social Sharing.
+*   **Infraestructura:** Proyecto migrado exitosamente a `C:\Dev\Production\caliope-app` para eliminar errores de rutas en Windows.
+
+### 4. Análisis Funcional Profundo (Enero 2026)
+Tras una auditoría de código (`src/app/actions.ts`, `Concierge`, `UserManagement`), se confirma el estado actual:
+*   **Arquitectura:** Híbrida (Next.js Server Actions + Firebase Firestore).
+*   **Modo Demo:** El sistema tiene "Fallbacks" inteligentes. Si no detecta credenciales de Firebase Admin, simula guardados y logins para no bloquear el desarrollo.
+*   **AI (Concierge):** Actualmente **Desactivada/Mockeada**. La función `getRecommendationsAction` retorna servicios genéricos en lugar de procesar con IA real (código comentado "to fix build").
+*   **Roles:** Sistema completo implementado (Cliente, Profesional, Admin) con flujos de registro diferenciados.
+*   **Membresías:** UI implementada, lógica de pagos en "Coming Soon".
